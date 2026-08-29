@@ -1,26 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { CreateThreadDto } from './dto/create-thread.dto';
 import { UpdateThreadDto } from './dto/update-thread.dto';
+import { ThreadsRepository } from './threads.repository';
 
 @Injectable()
 export class ThreadsService {
-  create(createThreadDto: CreateThreadDto) {
-    return 'This action adds a new thread';
+  constructor(private readonly threadsRepository: ThreadsRepository) {}
+
+  createNewThread(createThreadDto: CreateThreadDto, userId: number) {
+    return this.threadsRepository.createNewThread(createThreadDto, userId);
   }
 
   findAll() {
-    return `This action returns all threads`;
+    return this.threadsRepository.findAll();
+  }
+
+  findAllMy(userId: number) {
+    return this.threadsRepository.findAllMy(userId);
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} thread`;
+    return this.threadsRepository.findOne(id);
   }
 
   update(id: number, updateThreadDto: UpdateThreadDto) {
-    return `This action updates a #${id} thread`;
+    return this.threadsRepository.update(id, updateThreadDto);
   }
 
   remove(id: number) {
-    return `This action removes a #${id} thread`;
+    return this.threadsRepository.remove(id);
   }
 }

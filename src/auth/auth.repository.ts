@@ -7,35 +7,48 @@ export class AuthRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async register(registerAuthDto: RegisterAuthDto) {
-    console.log(registerAuthDto)
-    return registerAuthDto
+    const res = registerAuthDto
+    res['id'] = 'U00'
+    console.log(res)
+    return res
   }
 
   async login(username: string) {
-    console.log(username)
-    return {
-      username: 'qwer',
-      password: 'pass',
-    };
-    // return this.prisma.user.findUnique({
-    //   where: { username },
-    //   select: {
-    //     id: true,
-    //     username: true,
-    //     password: true
-    //   }
-    // });
+    return this.prisma.user.findUnique({
+      where: { username },
+      select: {
+        username: true,
+        passwordHash: true
+      }
+    })
   }
 
   async checkUsernameExist(username: string) {
     return this.prisma.user.findUnique({
-      where: { username }
+      where: { username },
+      select: {
+        username: true
+      }
     })
   }
   
   async checkEmailExist(email: string) {
     return this.prisma.user.findUnique({
-      where: { email }
+      where: { email },
+      select: {
+        email: true
+      }
+    })
+  }
+
+  async getUserInfoById(id: number) {
+    return this.prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        username: true,
+        email: true
+      }
     })
   }
 

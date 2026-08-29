@@ -22,7 +22,7 @@ export class AuthService {
     
     const hashedPassword = await bcrypt.hash(registerAuthDto.password, parseInt(process.env.BCRYPT_SALT_ROUNDS as string));
     
-    return await this.authRepository.register({...registerAuthDto, password: hashedPassword});    
+    return await this.authRepository.register({...registerAuthDto, password: hashedPassword}); 
   }
 
   async login(loginAuthDto: LoginAuthDto) {
@@ -32,7 +32,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials')
     }
 
-    const isPasswordValid = await bcrypt.compare(loginAuthDto.password, user.password);
+    const isPasswordValid = await bcrypt.compare(loginAuthDto.password, user.passwordHash);
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials')
     }

@@ -8,8 +8,9 @@ export class ThreadsController {
   constructor(private readonly threadsService: ThreadsService) {}
 
   @Post()
-  create(@Body() createThreadDto: CreateThreadDto) {
-    return this.threadsService.create(createThreadDto);
+  createNewThread(@Body() createThreadDto: CreateThreadDto) {
+    const userId = 1
+    return this.threadsService.createNewThread(createThreadDto, userId);
   }
 
   @Get()
@@ -20,6 +21,12 @@ export class ThreadsController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.threadsService.findOne(+id);
+  }
+
+  @Get('my-threads')
+  findAllMy() {
+    const userId = 1
+    return this.threadsService.findAllMy(userId);
   }
 
   @Patch(':id')

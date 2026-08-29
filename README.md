@@ -9,6 +9,7 @@ A RESTful API for a QnA forum discussion. [View Documentation](https://localhost
 ### Requirements
 
 - Node.js
+- PostgreSQL
 
 ### Setup
 
@@ -23,7 +24,7 @@ ___
 
 At the root of this folder, create a `.env` file. Edit its content with:
 ```
-DATABASE_URL="postgresql://[PostgresUsername]:[UsernamePassword]@[DatabaseURL]/qna_forum"
+DATABASE_URL="postgresql://[YourPostgresUsername]:[YourPostgresPassword]@[DatabaseURL]/qna_forum"
 JWT_SECRET="[Your-Desired-Secret-Phrase]"
 BCRYPT_SALT_ROUNDS="[YourDesiredInteger]"
 ```
@@ -38,17 +39,20 @@ npx ts-node -T prisma/scripts/init-db.ts
 ```
 This will create a database named `qna_forum` on the `postgres` connection if the database does not exist yet.
 
+
 Next,
 ```
 npx prisma migrate dev --config=prisma.config.ts
 ```
 This will run Prisma migrations.
 
+
 Next,
 ```
 npx prisma generate --config=prisma.config.ts
 ```
 This will generate Prisma Client.
+
 
 Next,
 ```
