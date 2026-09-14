@@ -1,10 +1,12 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Param } from '@nestjs/common';
 import { AuthRepository } from './auth.repository';
 
-@Controller('users')
+
+@Controller('user')
 export class UserController {
   constructor(private readonly authRepository: AuthRepository) {}
 
+  @HttpCode(HttpStatus.OK)
   @Get(':id')
   async getUserInfo(@Param('id') id: string) {
     try {

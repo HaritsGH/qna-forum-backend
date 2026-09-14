@@ -2,10 +2,16 @@ import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/co
 import { LoginAuthDto, RegisterAuthDto } from './dto/auth.dto';
 import { AuthRepository } from './auth.repository';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly authRepository: AuthRepository) {}
+  constructor(
+    private readonly authRepository: AuthRepository,
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService
+  ) {}
 
   async register(registerAuthDto: RegisterAuthDto) {
     // Check username uniqueness
@@ -26,6 +32,7 @@ export class AuthService {
   }
 
   async login(loginAuthDto: LoginAuthDto) {
+    console.log(loginAuthDto)
     const user = await this.authRepository.login(loginAuthDto.username)
 
     if (!user) {
@@ -37,13 +44,15 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials')
     }
 
-    const newToken = 'sseison_token_awikwok'
+    const payload = {sub: user.id, username: user.username}
+    const newToken = this.jwtService.sign(payload)
 
     await this.authRepository.updateToken(loginAuthDto.username, newToken)
     
     return {
-      token: newToken,
-      message: 'Login success.'
+      message: 'Login success.',
+      statusCode: '201',
+      token: newToken
     };
   }
 }

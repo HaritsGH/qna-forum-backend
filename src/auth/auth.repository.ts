@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { LoginAuthDto, RegisterAuthDto } from './dto/auth.dto';
+import { RegisterAuthDto } from './dto/auth.dto';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
@@ -7,16 +7,28 @@ export class AuthRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async register(registerAuthDto: RegisterAuthDto) {
-    const res = registerAuthDto
-    res['id'] = 'U00'
-    console.log(res)
-    return res
+    console.log(registerAuthDto)
+    const a = await this.prisma.user.upsert({
+      where: {
+        email: registerAuthDto.email
+      },
+      update: {
+
+      },
+      create: {
+        username: registerAuthDto.username,
+        passwordHash: registerAuthDto.password,
+        email: registerAuthDto.email
+      }
+    })
+    return {...a, id: `U00${a.id}`}
   }
 
   async login(username: string) {
-    return this.prisma.user.findUnique({
+    return await this.prisma.user.findUnique({
       where: { username },
       select: {
+        id: true,
         username: true,
         passwordHash: true
       }
@@ -24,7 +36,7 @@ export class AuthRepository {
   }
 
   async checkUsernameExist(username: string) {
-    return this.prisma.user.findUnique({
+    return await this.prisma.user.findUnique({
       where: { username },
       select: {
         username: true
@@ -33,7 +45,7 @@ export class AuthRepository {
   }
   
   async checkEmailExist(email: string) {
-    return this.prisma.user.findUnique({
+    return await this.prisma.user.findUnique({
       where: { email },
       select: {
         email: true
@@ -42,7 +54,7 @@ export class AuthRepository {
   }
 
   async getUserInfoById(id: number) {
-    return this.prisma.user.findUnique({
+    return await this.prisma.user.findUnique({
       where: { id },
       select: {
         id: true,
@@ -53,7 +65,7 @@ export class AuthRepository {
   }
 
   async updateToken(username: string, sessionToken: string) {
-    return this.prisma.user.update({
+    return await this.prisma.user.update({
       where: { username },
       data: { sessionToken }
     })

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Request } from '@nestjs/common';
+import { Controller, Post, Body, Request, HttpCode, HttpStatus} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginAuthDto, RegisterAuthDto } from './dto/auth.dto';
 
@@ -6,7 +6,8 @@ import { LoginAuthDto, RegisterAuthDto } from './dto/auth.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post()
+  @Post('register')
+  @HttpCode(HttpStatus.CREATED)
   async register(@Body() registerAuthDto: RegisterAuthDto) {
     try {
       const data = {
@@ -21,7 +22,8 @@ export class AuthController {
     
   }
 
-  @Post()
+  @Post('login')
+  @HttpCode(HttpStatus.OK)
   async login(@Body() loginAuthDto: LoginAuthDto) {
     try {
       const data = {
