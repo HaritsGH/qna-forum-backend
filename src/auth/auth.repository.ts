@@ -7,8 +7,7 @@ export class AuthRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async register(registerAuthDto: RegisterAuthDto) {
-    console.log(registerAuthDto)
-    const a = await this.prisma.user.upsert({
+    return await this.prisma.user.upsert({
       where: {
         email: registerAuthDto.email
       },
@@ -26,7 +25,6 @@ export class AuthRepository {
         email: true
       }
     })
-    return {...a, id: `U00${a.id}`}
   }
 
   async login(username: string) {
