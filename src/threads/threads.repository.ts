@@ -39,6 +39,7 @@ export class ThreadsRepository {
       data: {
         title: updateThreadDto.title,
         content: updateThreadDto.content,
+        updatedAt: new Date (Date.now())
       }
     });
   }

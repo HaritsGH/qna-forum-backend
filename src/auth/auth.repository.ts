@@ -19,6 +19,11 @@ export class AuthRepository {
         username: registerAuthDto.username,
         passwordHash: registerAuthDto.password,
         email: registerAuthDto.email
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true
       }
     })
     return {...a, id: `U00${a.id}`}

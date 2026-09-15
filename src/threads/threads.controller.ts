@@ -1,41 +1,69 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, UseGuards, Req, Patch } from '@nestjs/common';
 import { ThreadsService } from './threads.service';
 import { CreateThreadDto } from './dto/create-thread.dto';
 import { UpdateThreadDto } from './dto/update-thread.dto';
+import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
+import type { Request } from 'express';
 
 @Controller('threads')
 export class ThreadsController {
   constructor(private readonly threadsService: ThreadsService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  createNewThread(@Body() createThreadDto: CreateThreadDto) {
-    const userId = 1
-    return this.threadsService.createNewThread(createThreadDto, userId);
+  async createNewThread(@Req() request: any, @Body() createThreadDto: CreateThreadDto) {
+    try {
+      return await this.threadsService.createNewThread(createThreadDto, request.user.id);  
+    } catch (error) {
+      throw error
+    }
   }
 
   @Get()
-  findAll() {
-    return this.threadsService.findAll();
+  async findAllThreads() {
+    try {
+      return await this.threadsService.findAll(); 
+    } catch (error) {
+      throw error
+    }
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.threadsService.findOne(+id);
-  }
-
+  @UseGuards(JwtAuthGuard)
   @Get('my-threads')
-  findAllMy() {
-    const userId = 1
-    return this.threadsService.findAllMy(userId);
+  async findAllMyThreads(@Req() request: any) {
+    try {
+      return await this.threadsService.findAllMy(request.user.id);  
+    } catch (error) {
+      throw error
+    }
+  }
+  
+  @Get(':id')
+  async findOneThread(@Param('id') id: string) {
+    try {
+      return await this.threadsService.findOne(+id);  
+    } catch (error) {
+      throw error
+    }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateThreadDto: UpdateThreadDto) {
-    return this.threadsService.update(+id, updateThreadDto);
+  async updateThread(@Param('id') id: string, @Req() request: any, @Body() updateThreadDto: UpdateThreadDto) {
+    try {
+      return await this.threadsService.update(+id, request.user.id, updateThreadDto);      
+    } catch (error) {
+      throw error
+    }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.threadsService.remove(+id);
+  async removeThread(@Param('id') id: string, @Req() request: any) {
+    try {
+      return await this.threadsService.remove(+id, request.user.id);  
+    } catch (error) {
+      throw error
+    }
   }
 }

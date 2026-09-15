@@ -28,11 +28,14 @@ export class AuthService {
     
     const hashedPassword = await bcrypt.hash(registerAuthDto.password, parseInt(process.env.BCRYPT_SALT_ROUNDS as string));
     
-    return await this.authRepository.register({...registerAuthDto, password: hashedPassword}); 
+    return {
+      message: 'Register success.',
+      statusCode: '201',
+      data: await this.authRepository.register({...registerAuthDto, password: hashedPassword})
+    }; 
   }
 
   async login(loginAuthDto: LoginAuthDto) {
-    console.log(loginAuthDto)
     const user = await this.authRepository.login(loginAuthDto.username)
 
     if (!user) {
@@ -44,7 +47,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials')
     }
 
-    const payload = {sub: user.id, username: user.username}
+    const payload = {id: user.id, username: user.username}
     const newToken = this.jwtService.sign(payload)
 
     await this.authRepository.updateToken(loginAuthDto.username, newToken)
